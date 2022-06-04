@@ -28,17 +28,17 @@ public class App
     public static void main( String[] args ) throws Exception
     {
         System.out.println("\n\t\t  FOLIADOR v1.0\n\t\t=================\n\n");
-        if (args==null || args.length!=1)
+        if (args==null || args.length!=2)
         {
             System.out.println("\n\nError en la crida.\nHa de ser:\n\n");
-            System.out.println("\tjava -jar foliador.jar ARXIU_PDF NUMERO_DE_PAGINA_INICIAL");
+            System.out.println("\tjava -jar foliador.jar ARXIU_PDF NUMERO_DE_FOLI_INICIAL");
             System.out.println("\n\n");
             System.exit(0);
         }
         File file = File.createTempFile("foliador",".pdf");
         file.getParentFile().mkdirs();
 
-        new App().manipulatePdf(args[0],file.getAbsolutePath());
+        new App().manipulatePdf(args[0],file.getAbsolutePath(), Integer.parseInt(args[1]));
         App.copia(file, args[0]);
         file.delete();
         System.out.println("\n\nAcabat\n\n");
@@ -60,7 +60,7 @@ public class App
         }
     }
 
-    protected void manipulatePdf(String origin, String dest) throws Exception {
+    protected void manipulatePdf(String origin, String dest, int primeraPagina) throws Exception {
         //Document document = new Document();
         PdfReader reader = new PdfReader(origin);
         int numberOfPages = reader.getNumberOfPages();
@@ -72,7 +72,7 @@ public class App
 
 //          System.out.println("Pàgina: "+i);
           Rectangle rect = reader.getPageSize(i);
-          String text = "Foli "+((i/2)+1);
+          String text = "Foli "+(((i+1)/2+primeraPagina-1));
           PdfContentByte content = pdfStamper.getOverContent(i);
           int textHeightInGlyphSpace = bf.getAscent(text) - bf.getDescent(text);
           float fontSize = 10.0f;//1000f * rect.getHeight() / textHeightInGlyphSpace;
